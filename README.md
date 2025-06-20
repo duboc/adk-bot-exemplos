@@ -196,9 +196,8 @@ adk-bot-exemplos/
 ## 🔧 Configuration Notes
 
 ### Model Compatibility
-- **Recommended**: `gemini-2.5-flash-preview-05-20` (stable, proven)
-- **Live Agent**: `gemini-2.0-flash-live-preview-04-09` (real-time features)
-- **Avoid**: `gemini-2.0-flash-live-001` (known WebSocket issues)
+- **Recommended**: `gemini-2.5-flash-preview-05-20`
+- **Live Agent**: `gemini-2.0-flash-live-preview-04-09` 
 
 ### Cloud Services Setup
 - **Tracing**: Requires Vertex AI deployment for full functionality
