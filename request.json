@@ -1,0 +1,16 @@
+{
+  "contents": {
+    "role": "USER",
+    "parts": [
+      {
+        "fileData": {
+          "fileUri": "https://www.natura.com.br/c/logistica-reversa",
+          "mimeType": "text/html"
+        }
+      },
+      {
+        "text": "me explique como é o processo de logística reversa?"
+      }
+    ]
+  }
+}
