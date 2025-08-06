@@ -12,7 +12,7 @@ from tools.prompts import top_level_prompt
 
 logger = logging.getLogger(__name__)
 
-GEMINI_MODEL = "gemini-2.5-flash-preview-05-20"
+GEMINI_MODEL = "gemini-2.5-flash"
 
 # Create the agent
 root_agent = Agent(

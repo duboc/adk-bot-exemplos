@@ -14,7 +14,7 @@ from tools.prompts import (
 
 logger = logging.getLogger(__name__)
 
-GEMINI_MODEL = "gemini-2.5-flash-preview-05-20"
+GEMINI_MODEL = "gemini-2.5-flash"
 
 purchase_verifier_agent = Agent(
     model=GEMINI_MODEL,
