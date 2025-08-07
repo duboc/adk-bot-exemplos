@@ -4,7 +4,7 @@ A comprehensive collection of Google Agent Development Kit (ADK) examples demons
 
 ## 🎯 Overview
 
-This project showcases **8 different agent implementation patterns** using Google ADK, featuring two business domains:
+This project showcases **16 different agent implementation patterns** using Google ADK, featuring two business domains:
 
 - **🌿 Natura**: Brazilian cosmetics company refund processing system
 - **🍔 CRF (Comida Rápida Fantástica)**: Fast food ordering system with "Félix" character
@@ -18,7 +18,7 @@ This project showcases **8 different agent implementation patterns** using Googl
 - **Domain**: Natura refund system
 - **Tools**: `get_purchase_history`, `check_refund_eligibility`, `process_refund`
 - **Use Case**: Simple, straightforward interactions where one agent can handle all tasks
-- **Model**: `gemini-2.5-flash-preview-05-20`
+- **Model**: `gemini-2.5-flash`
 
 ```python
 root_agent = Agent(
@@ -38,7 +38,7 @@ root_agent = Agent(
 
 #### 3. Sequential Workflow (`src/3-workflow-sequential-multi-agent/`)
 **Pattern**: Linear pipeline where agents execute in sequence
-- **Domain**: Natura refund system
+- **Domain**: Code generation pipeline (Write, Review, Refactor)
 - **Architecture**: Step-by-step processing with defined order
 - **Use Case**: Workflows with clear dependencies and sequential steps
 
@@ -54,7 +54,7 @@ root_agent = Agent(
 - **Architecture**: Dynamic workflow control based on conditions
 - **Use Case**: Complex business logic requiring custom decision trees
 
-### Advanced Features (Examples 6-8)
+### Advanced Features & Callbacks (Examples 6-16)
 
 #### 6. Live Agent (`src/6-llm-live/`)
 **Pattern**: Real-time interactive conversational agent
@@ -64,16 +64,6 @@ root_agent = Agent(
 - **Model**: `gemini-2.0-flash-live-preview-04-09`
 - **Features**: Real-time conversation, personality-driven interactions
 
-```python
-root_agent = Agent(
-    model=GEMINI_MODEL,
-    name="FelixCRF",
-    description="Félix, el Amigo del Sabor - Fast food ordering agent",
-    instruction=felix_crf_agent['personality'],
-    tools=[finalize_order, get_menu_item_info],
-)
-```
-
 #### 7. Agent with Tracing (`src/7-agent-with-trace/`)
 **Pattern**: Single agent with ADK execution tracing enabled
 - **Domain**: Natura refund system
@@ -81,33 +71,59 @@ root_agent = Agent(
 - **Technology**: `AdkApp` with `enable_tracing=True`
 - **Use Case**: Debugging, performance monitoring, execution analysis
 
-```python
-# Wrap agent with AdkApp to enable tracing
-app = AdkApp(
-    agent=root_agent,
-    enable_tracing=True,
-)
-```
-
 #### 8. Agent with Logging (`src/8-agent-with-log/`)
 **Pattern**: Single agent with Google Cloud Logging integration
 - **Domain**: Natura refund system
 - **Features**: Structured logging, cloud integration, event tracking
-- **Technology**: `google.cloud.logging` with custom resource labeling
+- **Technology**: `google.cloud.logging`
 - **Use Case**: Production monitoring, analytics, audit trails
 
-```python
-class NaturaAgentWithLogging:
-    def set_up(self):
-        self.logging_client = google.cloud.logging.Client(project="PROJECT_ID")
-        # Configure structured logging with resource metadata
-```
+#### 9. Agent with URL Context (`src/9-agent-url-context/`)
+**Pattern**: Agent that can analyze content from a URL.
+- **Domain**: Web content analysis
+- **Tools**: `analyze_url_content`
+- **Use Case**: Summarizing articles, extracting information from websites.
+
+#### 10. Agent with Before Agent Callback (`src/10-agent-before-callback/`)
+**Pattern**: Demonstrates the `before_agent_callback` to control agent execution.
+- **Theme**: Magic 8-Ball with mood control.
+- **Feature**: The callback can skip the agent's execution based on session state.
+
+#### 11. Agent with After Agent Callback (`src/11-agent-after-callback/`)
+**Pattern**: Demonstrates the `after_agent_callback` to review and improve agent responses.
+- **Theme**: Restaurant reviewer with an LLM auditor.
+- **Feature**: A callback uses an LLM auditor for quality control of the agent's output.
+
+#### 12. Agent with Before Model Callback (`src/12-before-model-callback/`)
+**Pattern**: Demonstrates the `before_model_callback` to implement content filtering.
+- **Theme**: Content filter with guardrails.
+- **Feature**: The callback filters inappropriate content before it reaches the LLM.
+
+#### 13. Agent with After Model Callback (`src/13-after-model-callback/`)
+**Pattern**: Demonstrates the `after_model_callback` for post-processing LLM responses.
+- **Theme**: Translation service with quality improvement.
+- **Feature**: The callback uses an LLM auditor to improve translation quality.
+
+#### 14. Agent with Before Tool Callback (`src/14-before-tool-callback/`)
+**Pattern**: Demonstrates the `before_tool_callback` for permission checks.
+- **Theme**: Weather service with permission checks and rate limiting.
+- **Feature**: The callback implements permission checks before tool execution.
+
+#### 15. Agent with After Tool Callback (`src/15-after-tool-callback/`)
+**Pattern**: Demonstrates the `after_tool_callback` for validating and enhancing tool results.
+- **Theme**: Calculator service with result validation.
+- **Feature**: The callback validates and enhances calculation results.
+
+#### 16. Agent with Image Handling (`src/16-image-handling/`)
+**Pattern**: Agent specialized in comprehensive image analysis.
+- **Features**: Can save, list, show and analyze images using Gemini.
+- **Use Case**: Image description, object recognition, etc.
 
 ## 🛠️ Technical Stack
 
 - **Framework**: Google Agent Development Kit (ADK)
 - **Language**: Python 3.x
-- **Models**: Gemini 2.5 Flash Preview, Gemini 2.0 Flash Live
+- **Models**: Gemini 2.5 Flash, Gemini 2.5 Pro
 - **Cloud Services**: Google Cloud Logging, Cloud Trace, Vertex AI
 - **Tools**: Custom business logic functions for each domain
 
@@ -128,87 +144,33 @@ pip install -r src/requirements.txt
 
 ### Running Examples
 
-#### Basic Examples (1-5)
-```python
-# Example 1: Single Agent
-from src.1_llm_single_agent.agent import root_agent
-response = root_agent.query("I need help with a refund")
-```
-
-#### Live Agent (Example 6)
-```python
-# Example 6: Live Agent
-from src.6_llm_live.agent import root_agent
-# Real-time conversation with Félix
-response = root_agent.query("¡Hola! Quiero hacer un pedido")
-```
-
-#### Tracing Agent (Example 7)
-```python
-# Example 7: With Tracing
-from src.7_agent_with_trace.agent import app
-# Traces will appear in Google Cloud Console
-response = app.query("Check my refund status")
-```
-
-#### Logging Agent (Example 8)
-```python
-# Example 8: With Logging
-from src.8_agent_with_log.agent import natura_logging, root_agent
-natura_logging.set_up()  # Configure cloud logging
-response = natura_logging.query({"message": "Process my refund"})
-```
-
-## 📊 Business Domains
-
-### Natura Refund System
-- **Language**: Portuguese
-- **Tools**: Purchase history, eligibility checking, refund processing
-- **Business Logic**: Shipping method and reason-based eligibility
-- **Examples**: 1, 2, 3, 4, 5, 7, 8
-
-### CRF Fast Food Ordering
-- **Language**: Spanish
-- **Character**: Félix - enthusiastic food assistant
-- **Tools**: Menu information, order finalization
-- **API Integration**: External ordering system
-- **Examples**: 6
+To run any example, you can execute the `main()` function in the respective `agent.py` file.
 
 ## 📁 Project Structure
 
 ```
 adk-bot-exemplos/
 ├── src/
-│   ├── 1-llm-single-agent/          # Basic single agent
-│   ├── 2-llm-multi-agent/           # Multi-agent coordinator
-│   ├── 3-workflow-sequential-multi-agent/  # Sequential workflow
-│   ├── 4-workflow-parallel-multi-agent/    # Parallel workflow
-│   ├── 5-custom-agent-control-flow/        # Custom control flow
-│   ├── 6-llm-live/                  # Live conversational agent
-│   ├── 7-agent-with-trace/          # Tracing integration
-│   ├── 8-agent-with-log/            # Logging integration
-│   └── tools/                       # Shared tools and prompts
-├── docs/                            # Detailed documentation
-├── memory-bank/                     # Project context and patterns
-└── README.md                        # This file
+│   ├── 1-llm-single-agent/
+│   ├── 2-llm-multi-agent/
+│   ├── 3-workflow-sequential-multi-agent/
+│   ├── 4-workflow-parallel-multi-agent/
+│   ├── 5-custom-agent-control-flow/
+│   ├── 6-llm-live/
+│   ├── 7-agent-with-trace/
+│   ├── 8-agent-with-log/
+│   ├── 9-agent-url-context/
+│   ├── 10-agent-before-callback/
+│   ├── 11-agent-after-callback/
+│   ├── 12-before-model-callback/
+│   ├── 13-after-model-callback/
+│   ├── 14-before-tool-callback/
+│   ├── 15-after-tool-callback/
+│   ├── 16-image-handling/
+│   └── tools/
+├── README.md
+└── LICENSE
 ```
-
-## 🔧 Configuration Notes
-
-### Model Compatibility
-- **Recommended**: `gemini-2.5-flash-preview-05-20`
-- **Live Agent**: `gemini-2.0-flash-live-preview-04-09` 
-
-### Cloud Services Setup
-- **Tracing**: Requires Vertex AI deployment for full functionality
-- **Logging**: Needs proper IAM permissions (`roles/logging.logWriter`)
-- **Authentication**: Service account or user credentials required
-
-## 📚 Documentation
-
-- [`docs/`](docs/) - Detailed documentation for each pattern
-- [`memory-bank/`](memory-bank/) - Project context and architectural decisions
-- [`docs/api/`](docs/api/) - API documentation for tools and prompts
 
 ## 🤝 Contributing
 
@@ -217,7 +179,6 @@ Each example is self-contained and can be extended independently. When adding ne
 1. Follow the established naming convention (`N-description/`)
 2. Include proper logging and error handling
 3. Update this README with the new example
-4. Add documentation in the `docs/` directory
 
 ## 📄 License
 

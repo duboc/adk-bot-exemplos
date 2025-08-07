@@ -14,6 +14,24 @@ The process follows a clear, linear sequence:
 
 This entire workflow is orchestrated by a `SequentialAgent`, which ensures that each sub-agent executes in the correct order, passing its output to the next agent in the chain via a shared state.
 
+## Key Concepts
+
+- **SequentialAgent**: An agent that runs a series of sub-agents in a predefined order. It's ideal for linear workflows where the output of one step is the input for the next.
+- **State Management**: The `SequentialAgent` maintains a state dictionary that is passed to each sub-agent. Sub-agents can read from and write to this state, allowing them to share information.
+- **LLM-only Agents**: The agents in this pipeline (`CodeWriterAgent`, `CodeReviewerAgent`, `CodeRefactorerAgent`) are pure `LlmAgent` instances. They do not use external tools; their logic is entirely defined by their instructional prompts.
+
+## Technical Details
+
+### State Management
+
+The communication between agents is handled through the `state` dictionary. Here’s how it works:
+
+1.  The `CodeWriterAgent` runs first. It saves its output (the generated code) to `state['generated_code']` because its `output_key` is set to `"generated_code"`.
+2.  The `CodeReviewerAgent` runs next. Its instruction prompt includes the placeholder `{generated_code}`. The ADK automatically injects the value from `state['generated_code']` into the prompt. The reviewer then saves its feedback to `state['review_comments']`.
+3.  Finally, the `CodeRefactorerAgent` runs. Its prompt uses both `{generated_code}` and `{review_comments}` placeholders, which are populated from the state. It produces the final output, which is stored in `state['refactored_code']`.
+
+This mechanism allows for a seamless flow of data through the pipeline without requiring complex custom logic.
+
 ## Agents
 
 ### 1. `CodeWriterAgent`
@@ -37,3 +55,4 @@ This agent can be run using the ADK CLI. Provide a prompt describing the code yo
 Example:
 ```bash
 adk run "create a Python function that calculates the factorial of a number"
+```
