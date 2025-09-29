@@ -194,3 +194,4 @@ cython_debug/
 .cursorindexingignore
 memory-bank/
 .DS_Store
+.crush/
