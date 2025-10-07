@@ -4,10 +4,11 @@ A comprehensive collection of Google Agent Development Kit (ADK) examples demons
 
 ## 🎯 Overview
 
-This project showcases **16 different agent implementation patterns** using Google ADK, featuring two business domains:
+This project showcases **19 different agent implementation patterns** using Google ADK, featuring three business domains:
 
 - **🌿 Natura**: Brazilian cosmetics company refund processing system
 - **🍔 CRF (Comida Rápida Fantástica)**: Fast food ordering system with "Félix" character
+- **💄 Essencia**: Brazilian cosmetics company for state management and memory examples
 
 ## 🏗️ Agent Examples
 
@@ -119,12 +120,57 @@ root_agent = Agent(
 - **Features**: Can save, list, show and analyze images using Gemini.
 - **Use Case**: Image description, object recognition, etc.
 
+### State Management & Memory (Examples 18-19)
+
+#### 18. Session State Management (`src/18-session-state-example/`)
+**Pattern**: Stateful conversational agent with session state tracking
+- **Domain**: Essencia customer service
+- **Features**: Session, user, app, and temporary state scopes
+- **Tools**: `save_user_preference`, `get_product_recommendation`, `track_interaction`
+- **Key Concept**: Using `tool_context` parameter for state access
+- **State Injection**: `{key}` syntax in agent instructions
+- **Use Case**: Personalized customer interactions with preference tracking
+
+```python
+def save_user_preference(
+    preference_key: str,
+    preference_value: str,
+    tool_context: ToolContext  # Auto-injected by ADK
+) -> str:
+    tool_context.state[f"user:{preference_key}"] = preference_value
+    return "Saved!"
+```
+
+**Run**: `adk web src/18-session-state-example/agent.py`
+
+#### 19. Memory Management (`src/19-memory-example/`)
+**Pattern**: Agent with long-term memory across conversations
+- **Domain**: Essencia customer service
+- **Features**: InMemoryMemoryService, load_memory tool
+- **Tools**: `load_memory` (built-in ADK tool)
+- **Key Concept**: Memory vs. State - long-term knowledge vs. temporary scratchpad
+- **Use Case**: Agents that remember customer interactions across sessions
+
+```python
+agent = LlmAgent(
+    model="gemini-2.5-flash",
+    tools=[load_memory],  # Built-in ADK tool
+    instruction="Use load_memory to recall past conversations..."
+)
+
+# Store session in memory
+await memory_service.add_session_to_memory(session)
+```
+
+**Run**: `adk web src/19-memory-example/agent.py`
+
 ## 🛠️ Technical Stack
 
 - **Framework**: Google Agent Development Kit (ADK)
 - **Language**: Python 3.x
-- **Models**: Gemini 2.5 Flash, Gemini 2.5 Pro
+- **Models**: Gemini 2.5 Flash, Gemini 2.5 Pro, Gemini 2.0 Flash Live
 - **Cloud Services**: Google Cloud Logging, Cloud Trace, Vertex AI
+- **State Management**: ADK Session State, Memory Services
 - **Tools**: Custom business logic functions for each domain
 
 ## 🚀 Quick Start
@@ -135,16 +181,51 @@ pip install -r src/requirements.txt
 ```
 
 ### Environment Setup
-1. Configure Google Cloud credentials
-2. Set up `.env` file with required API keys
-3. Enable required Google Cloud APIs:
+
+1. **Configure Google Cloud credentials**
+   ```bash
+   gcloud auth application-default login
+   ```
+
+2. **Set up `.env` file**
+   ```bash
+   # Copy the template
+   cp .env.local .env
+
+   # Edit .env and add your Agent Engine resource ID
+   # MEMORY_SERVICE_URI=agentengine://YOUR_RESOURCE_ID
+   ```
+
+3. **Enable required Google Cloud APIs**:
    - Vertex AI API
+   - Agent Engine API (for Example 19 - Memory)
    - Cloud Trace API (for Example 7)
    - Cloud Logging API (for Example 8)
 
 ### Running Examples
 
-To run any example, you can execute the `main()` function in the respective `agent.py` file.
+#### Using ADK Web Interface (Basic)
+```bash
+# Run examples without memory service
+adk web src/{example-name}/agent.py
+
+# Examples:
+adk web src/1-llm-single-agent/agent.py
+adk web src/18-session-state-example/agent.py
+```
+
+#### Using ADK Web Interface with Memory Service (Example 19)
+```bash
+# Load environment variables and run with memory service
+source .env
+adk web src/19-memory-example/agent.py --memory_service_uri="$MEMORY_SERVICE_URI"
+
+# Or directly:
+adk web src/19-memory-example/agent.py --memory_service_uri="agentengine://YOUR_RESOURCE_ID"
+```
+
+#### Programmatic Execution
+You can also execute the `main()` function in the respective `agent.py` file, or run demo scripts where available.
 
 ## 📁 Project Structure
 
@@ -167,10 +248,28 @@ adk-bot-exemplos/
 │   ├── 14-before-tool-callback/
 │   ├── 15-after-tool-callback/
 │   ├── 16-image-handling/
+│   ├── 18-session-state-example/
+│   ├── 19-memory-example/
 │   └── tools/
 ├── README.md
 └── LICENSE
 ```
+
+## 🎓 Learning Path
+
+### For Beginners
+1. Start with **Example 1** (Single Agent) - Understand basic agent structure
+2. Move to **Example 18** (Session State) - Learn stateful conversations
+3. Try **Example 19** (Memory) - Understand long-term memory
+
+### For Intermediate Users
+4. Explore **Example 3** (Sequential) and **Example 4** (Parallel) - Multi-agent patterns
+5. Study **Examples 10-15** (Callbacks) - Advanced control flow
+6. Experiment with **Example 6** (Live Agent) - Real-time interactions
+
+### For Advanced Users
+7. Implement **Example 7** (Tracing) and **Example 8** (Logging) - Production monitoring
+8. Build custom patterns combining multiple examples
 
 ## 🤝 Contributing
 
@@ -178,7 +277,8 @@ Each example is self-contained and can be extended independently. When adding ne
 
 1. Follow the established naming convention (`N-description/`)
 2. Include proper logging and error handling
-3. Update this README with the new example
+3. Add comprehensive README.md to the example directory
+4. Update this main README with the new example
 
 ## 📄 License
 

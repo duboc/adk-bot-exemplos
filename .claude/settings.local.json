@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python src/18-session-state-example/quick_test.py)",
+      "Bash(curl -s \"https://google.github.io/adk-docs/sessions/memory/\")"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
